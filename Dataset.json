@@ -1,0 +1,94 @@
+
+  [
+    {
+      "Stato": "Italia",
+      "Prima": 23.06, 
+      "Sec": 40.86, 
+      "AspettativaDiVita": 83, 
+      "Ter": 36.08,
+      "EtaMedia": 46.8,
+      "Fecondita": 1.28
+    },
+    {
+      "Stato": "USA",
+      "Prima": 31.37,
+      "Sec": 38.92, 
+      "AspettativaDiVita": 78.4, 
+      "Ter": 29.71,
+      "EtaMedia": 37.7,
+      "Fecondita": 1.66
+    },
+    {
+      "Stato": "India",
+      "Prima": 43.82,
+      "Sec": 41.56, 
+      "AspettativaDiVita": 74.8, 
+      "Ter": 14.63,
+      "EtaMedia": 27.6,
+      "Fecondita": 2.03
+    },
+    {
+     "Stato": "Australia",
+      "Prima": 31.61,
+      "Sec": 41.15, 
+      "AspettativaDiVita": 84.5, 
+      "Ter": 27.23,
+      "EtaMedia": 37,
+      "Fecondita": 1.47
+    },
+    {
+     "Stato": "Sud Africa",
+      "Prima": 44.74,
+      "Sec": 42.37, 
+      "AspettativaDiVita": 62.3, 
+      "Ter": 12.89,
+      "EtaMedia": 27.1,
+      "Fecondita": 2.37
+    },
+    {
+      "Stato": "Argentina",
+      "Prima": 39.21,
+      "Sec": 39.6, 
+      "AspettativaDiVita": 75.4, 
+      "Ter": 21.2,
+      "EtaMedia": 31.3,
+      "Fecondita": 1.89
+    },
+    {
+      "Stato": "Messico",
+      "Prima": 42.98,
+      "Sec": 41.06, 
+      "AspettativaDiVita": 70.2, 
+      "Ter": 15.96,
+      "EtaMedia": 29,
+      "Fecondita":1.82
+    },
+    {
+      "Stato": "Etiopia",
+      "Prima": 59.28,
+      "Sec": 32.92, 
+      "AspettativaDiVita": 65, 
+      "Ter": 7.8,
+      "EtaMedia": 18.5,
+      "Fecondita": 4.16
+    },
+    {
+      "Stato": "Kenya",
+      "Prima": 59.16,
+      "Sec": 33.75, 
+      "AspettativaDiVita": 61.4, 
+      "Ter": 7.08,
+      "EtaMedia": 19.2,
+      "Fecondita": 3.34
+    },
+    {
+      "Stato": "Russia",
+      "Prima": 26.78,
+      "Sec": 43.38, 
+      "AspettativaDiVita": 69.4, 
+      "Ter": 29.84,
+      "EtaMedia": 38.8,
+      "Fecondita": 1.49
+    }
+  ]
+

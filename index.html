@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D3 Test</title>
+<script type="text/javascript" src="https://d3js.org/d3.v7.js"></script>
+</head>
+<body>
+<div id="visualization"></div>
+<div> 
+</div>
+<script type="text/javascript">
+
+let dataset;
+/* carica il dataset dal file json */
+d3.json("http://localhost:3333/Dataset.json").then(function(data) {
+  dataset = data.map(function(d) {
+    return {
+      id: d.Stato,
+      x: d.AspettativaDiVita,
+      y: d.EtaMedia,
+      head: d.Prima,
+      body: d.Sec,
+      tail: d.Ter,
+      ante: d.Fecondita
+    };
+  });
+
+const width = 2000;
+const height = 1200;
+const marginTop = 20;
+const marginRight = 0;
+const marginBottom = 20;
+const marginLeft = 50;
+
+
+/* scalatura dei valori */
+
+var scaleX = d3.scaleLinear();
+scaleX.domain([
+        d3.min(dataset, function(element){return element["x"]*0.9}),
+        d3.max(dataset, function(element){return element["x"]*1.1})
+        ]);
+scaleX.range([0, width]); 
+
+var scaleY = d3.scaleLinear();
+scaleY.domain([
+        d3.min(dataset, function(element){return element["y"]*0.9}),
+        d3.max(dataset, function(element){return element["y"]*1.1})
+        ]);
+scaleY.range([height - marginBottom, marginTop]); 
+
+var scaleHead = d3.scaleLinear();
+scaleHead.domain([
+        d3.min(dataset, function(element){return element["head"]}),
+        d3.max(dataset, function(element){return element["head"]})
+        ]);
+scaleHead.range([20, 35]); 
+
+var scaleBody = d3.scaleLinear();
+scaleBody.domain([
+        d3.min(dataset, function(element){return element["body"]}), 
+        d3.max(dataset, function(element){return element["body"]})
+        ]);
+scaleBody.range([20, 35]); 
+
+var scaleTail = d3.scaleLinear();
+scaleTail.domain([
+        d3.min(dataset, function(element){return element["tail"]}),
+        d3.max(dataset, function(element){return element["tail"]})
+        ]);
+scaleTail.range([20, 35]); 
+
+var scaleAnte = d3.scaleLinear();
+scaleAnte.domain([
+        d3.min(dataset, function(element){return element["ante"]}), 
+        d3.max(dataset, function(element){return element["ante"]})
+        ]);
+scaleAnte.range([25, 55]); 
+
+/*crea gli assi */
+var xAxis = d3.axisBottom()
+              .scale(scaleX);
+var yAxis = d3.axisLeft()
+              .scale(scaleY);
+
+/* crea svg */
+const svg = d3.select("#visualization")
+              .append("svg")
+              .attr("width", width)
+              .attr("height", height)
+              .attr("viewBox", [0, 0, width, height])
+              .attr("style", "max-width: 90%; height: auto;");
+
+/* disegna gli assi */
+svg.append("g")
+   .attr("transform", "translate(" + (marginLeft) + "," + (height - marginBottom ) + ")")
+   .call(xAxis)
+   .style("stroke-width", "3px")
+   .style("font-size", "14px");
+
+
+svg.append("text")
+   .attr("transform", "translate(" + (width/2) + " ," +(height - marginBottom -10) + ")")
+   .style("text-anchor", "middle")
+   .style("font-weight", "bold") 
+   .style("font-size", "30px")
+   .text("Aspettativa di Vita");
+
+svg.append("g")
+   .attr("transform", "translate(" + marginLeft + ",0)")
+   .call(yAxis)
+   .style("stroke-width", "3px")
+   .style("font-size", "14px");
+
+svg.append("text")
+   .attr("transform", "rotate(-90)")
+   .attr("y", marginLeft +10)
+   .attr("x", 0 - (height / 2))
+   .attr("dy", "1em")
+   .style("text-anchor", "middle")
+   .style("font-weight", "bold")
+   .style("font-size", "30px")
+   .text("Età media");
+
+/* disegna la legenda */
+svg.append("rect")
+   .attr("class", "legend")
+   .attr("x", (width/1.4))
+   .attr("y", height-marginTop*14)
+   .attr("width", width-width/1.4-1)
+   .attr("height", marginTop*12)
+   .style("fill", "white")
+   .style("stroke", "black")        
+   .style("stroke-width", 2); 
+
+svg.append("circle")
+   .attr("class", "legend")
+   .attr("cx", width/1.28 )   
+   .attr("cy", height-marginTop*8 )  
+   .attr("r", width/30);
+svg.append("circle")
+   .attr("class", "legend")
+   .attr("cx", width/1.28+width/30+width/50 )  
+   .attr("cy", height-marginTop*8 )  
+   .attr("r", width/50);
+svg.append("circle")
+   .attr("class", "legend")
+   .attr("cx", width/1.28+width/30+width/25+width/40 )   
+   .attr("cy", height-marginTop*8 )  
+   .attr("r", width/40);
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1750 1060 L 1900 1060"})
+   .attr("fill", "none") 
+   .attr("stroke", "black") 
+   .attr("stroke-width", 2) 
+   .attr("stroke-linejoin", "round");
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1750 1015 L 1900 1015"})
+   .attr("fill", "none") 
+   .attr("stroke", "black") 
+   .attr("stroke-width", 2) 
+   .attr("stroke-linejoin", "round");
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1650 970 L 1650 1110"})
+   .attr("fill", "none") 
+   .attr("stroke", "black") 
+   .attr("stroke-width", 2) 
+   .attr("stroke-linejoin", "round");
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1670 970 L 1670 1110"})
+   .attr("fill", "none") 
+   .attr("stroke", "black") 
+   .attr("stroke-width", 2) 
+   .attr("stroke-linejoin", "round");
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1690 970 L 1690 1110"})
+   .attr("fill", "none") 
+   .attr("stroke", "black") 
+   .attr("stroke-width", 2) 
+   .attr("stroke-linejoin", "round");
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1560 1050 L 1520 1130"})
+   .attr("fill", "none") 
+   .attr("stroke", "red") 
+   .attr("stroke-width", 4) 
+   .attr("stroke-linejoin", "round");
+svg.append("text")
+   .attr("y", 1150)
+   .attr("x", 1520)
+   .style("text-anchor", "middle")
+   .style("font-weight", "bold")
+   .style("font-size", "25px")
+   .text("% ab. >=55 anni");
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1670 1040 L 1740 950"})
+   .attr("fill", "none") 
+   .attr("stroke", "red") 
+   .attr("stroke-width", 4) 
+   .attr("stroke-linejoin", "round");
+svg.append("text")
+   .attr("y", 945)
+   .attr("x", 1740)
+   .style("text-anchor", "middle")
+   .style("font-weight", "bold")
+   .style("font-size", "25px")
+   .text("% ab. 25-54 anni");
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1760 1050 L 1790 1130"})
+   .attr("fill", "none") 
+   .attr("stroke", "red") 
+   .attr("stroke-width", 4) 
+   .attr("stroke-linejoin", "round");
+svg.append("text")
+   .attr("y", 1150)
+   .attr("x", 1790)
+   .style("text-anchor", "middle")
+   .style("font-weight", "bold")
+   .style("font-size", "25px")
+   .text("% ab. 0-24 anni");
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1860 1020 L 1860 1055"})
+   .attr("fill", "none") 
+   .attr("stroke", "red") 
+   .attr("stroke-width", 4) 
+   .attr("stroke-linejoin", "round");
+svg.append("path")
+   .attr("class", "legend")
+   .attr("d", function(d){return "M 1860 1037 L 1920 1095"})
+   .attr("fill", "none") 
+   .attr("stroke", "red") 
+   .attr("stroke-width", 4) 
+   .attr("stroke-linejoin", "round");
+svg.append("text")
+   .attr("y", 1115)
+   .attr("x", 1910)
+   .style("text-anchor", "middle")
+   .style("font-weight", "bold")
+   .style("font-size", "25px")
+   .text("Tasso di fertilità");
+
+/* crea una formica per ogni elemento del dataset */
+
+var selectedAnt = null;
+
+const ants = svg.selectAll(".ant")
+                .data(dataset)
+                .enter()
+                .append("g") 
+                .attr("class", "ant")
+                .on("click", function(d) {
+                    if (selectedAnt === null) {
+                        selectedAnt = d3.select(this);
+                        selectedAnt.selectAll(".ant").style("fill", "red");
+                        selectedAnt.selectAll(".ant").attr("stroke", "red");
+                    } else {
+                        var clickedAnt = d3.select(this);
+                        var selectedIndex = selectedAnt.data()[0].id;
+                        var clickedIndex = clickedAnt.data()[0].id;
+                        var selectedIndex = dataset.findIndex(function(element) {
+                                  return element.id === selectedIndex;
+                                  });
+                        var clickedIndex = dataset.findIndex(function(element) {
+                                  return element.id === clickedIndex;
+                         });
+                        var temp = {};
+                        var tempX = dataset[clickedIndex].x
+                        var tempY = dataset[clickedIndex].y
+                        Object.assign(temp, dataset[selectedIndex]);
+                        Object.assign(dataset[selectedIndex], dataset[clickedIndex]);
+                        Object.assign(dataset[selectedIndex], { x: temp.x, y: temp.y });
+                        Object.assign(dataset[clickedIndex], temp);
+                        Object.assign(dataset[clickedIndex], { x: tempX, y: tempY });
+                        selectedAnt.selectAll("#head")
+                                   .transition()
+                                   .duration(1000)
+                                   .attr("cx", function(d){return scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/4)})   
+                                   .attr("cy", function(d){return scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/4)})  
+                                   .attr("r", function(d) { return scaleHead(d.head); });
+                        selectedAnt.selectAll("#body")
+                                   .transition()
+                                   .duration(1000)
+                                   .attr("cx", function(d){return scaleX(d.x)})  
+                                   .attr("cy", function(d){return scaleY(d.y)})
+                                   .attr("r", function(d) { return scaleBody(d.body); });
+                        selectedAnt.selectAll("#tail")
+                                   .transition()
+                                   .duration(1000)
+                                   .attr("cx", function(d){return scaleX(d.x)-(scaleBody(d.body)+scaleTail(d.tail))*Math.cos(-Math.PI/4)})   
+                                   .attr("cy", function(d){return scaleY(d.y)-(scaleBody(d.body)+scaleTail(d.tail))*Math.sin(-Math.PI/4)})
+                                   .attr("r", function(d) { return scaleTail(d.tail); });
+                        selectedAnt.selectAll("#antenna1")
+                                   .transition()
+                                   .duration(1000)
+                                   .attr("d", function(d){return "M"+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/3)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/3)-scaleHead(d.head)*0.5)+" L "+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/3)+scaleAnte(d.ante)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/3)-scaleAnte(d.ante)-scaleHead(d.head)*0.5)});
+                        selectedAnt.selectAll("#antenna2")
+                                   .transition()
+                                   .duration(1000)
+                                   .attr("d", function(d){return "M"+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/5)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/5)-scaleHead(d.head)*0.5)+" L "+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/5)+scaleAnte(d.ante)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/5)-scaleAnte(d.ante)-scaleHead(d.head)*0.5)});
+                        selectedAnt.selectAll("#zampa1")
+                                   .transition()
+                                   .duration(1000)
+                                   .attr("d",  function(d){return "M"+(scaleX(d.x)-scaleBody(d.body)*1.5)+" "+(scaleY(d.y)-scaleBody(d.body)*1.125)+" L "+(scaleX(d.x)+scaleBody(d.body)*1.5)+" "+(scaleY(d.y)+scaleBody(d.body)*1.125)});
+                        selectedAnt.selectAll("#zampa2")
+                                   .transition()
+                                   .duration(1000)
+                                   .attr("d",  function(d){return "M"+(scaleX(d.x)-scaleBody(d.body)*1.125)+" "+(scaleY(d.y)-scaleBody(d.body)*1.5)+" L "+(scaleX(d.x)+scaleBody(d.body)*1.875)+" "+(scaleY(d.y)+scaleBody(d.body)*0.75)});
+                        selectedAnt.selectAll("#zampa3")
+                                   .transition()
+                                   .duration(1000)
+                                   .attr("d",  function(d){return "M"+(scaleX(d.x)-scaleBody(d.body)*1.875)+" "+(scaleY(d.y)-scaleBody(d.body)*0.75)+" L "+(scaleX(d.x)+scaleBody(d.body)*1.125)+" "+(scaleY(d.y)+scaleBody(d.body)*1.5)});
+                        clickedAnt.selectAll("#head")
+                                  .transition()
+                                  .duration(1000)
+                                  .attr("cx", function(d){return scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/4)})   
+                                  .attr("cy", function(d){return scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/4)})  
+                                  .attr("r", function(d) { return scaleHead(d.head); });
+                        clickedAnt.selectAll("#body")
+                                  .transition()
+                                  .duration(1000)
+                                  .attr("cx", function(d){return scaleX(d.x)})  
+                                  .attr("cy", function(d){return scaleY(d.y)})
+                                  .attr("r", function(d) { return scaleBody(d.body); });
+                        clickedAnt.selectAll("#tail")
+                                  .transition()
+                                  .duration(1000)
+                                  .attr("cx", function(d){return scaleX(d.x)-(scaleBody(d.body)+scaleTail(d.tail))*Math.cos(-Math.PI/4)})   
+                                  .attr("cy", function(d){return scaleY(d.y)-(scaleBody(d.body)+scaleTail(d.tail))*Math.sin(-Math.PI/4)})
+                                  .attr("r", function(d) { return scaleTail(d.tail); });
+                        clickedAnt.selectAll("#antenna1")
+                                  .transition()
+                                  .duration(1000)
+                                  .attr("d", function(d){return "M"+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/3)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/3)-scaleHead(d.head)*0.5)+" L "+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/3)+scaleAnte(d.ante)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/3)-scaleAnte(d.ante)-scaleHead(d.head)*0.5)});
+                        clickedAnt.selectAll("#antenna2")
+                                  .transition()
+                                  .duration(1000)
+                                  .attr("d", function(d){return "M"+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/5)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/5)-scaleHead(d.head)*0.5)+" L "+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/5)+scaleAnte(d.ante)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/5)-scaleAnte(d.ante)-scaleHead(d.head)*0.5)});
+                        clickedAnt.selectAll("#zampa1")
+                                  .transition()
+                                  .duration(1000)
+                                  .attr("d",  function(d){return "M"+(scaleX(d.x)-scaleBody(d.body)*1.5)+" "+(scaleY(d.y)-scaleBody(d.body)*1.125)+" L "+(scaleX(d.x)+scaleBody(d.body)*1.5)+" "+(scaleY(d.y)+scaleBody(d.body)*1.125)});
+                        clickedAnt.selectAll("#zampa2")
+                                  .transition()
+                                  .duration(1000)
+                                  .attr("d",  function(d){return "M"+(scaleX(d.x)-scaleBody(d.body)*1.125)+" "+(scaleY(d.y)-scaleBody(d.body)*1.5)+" L "+(scaleX(d.x)+scaleBody(d.body)*1.875)+" "+(scaleY(d.y)+scaleBody(d.body)*0.75)});
+                        clickedAnt.selectAll("#zampa3")
+                                  .transition()
+                                  .duration(1000)
+                                  .attr("d",  function(d){return "M"+(scaleX(d.x)-scaleBody(d.body)*1.875)+" "+(scaleY(d.y)-scaleBody(d.body)*0.75)+" L "+(scaleX(d.x)+scaleBody(d.body)*1.125)+" "+(scaleY(d.y)+scaleBody(d.body)*1.5)});
+                        selectedAnt.selectAll(".ant").style("fill", null);
+                        selectedAnt.selectAll(".ant").attr("stroke", "black");
+                        selectedAnt = null;
+  }
+});
+  
+
+  
+  
+/* coda della formica */
+ants.append("circle")
+    .attr("class", "ant")
+    .attr("id", "tail")
+    .attr("cx", function(d){return scaleX(d.x)-(scaleBody(d.body)+scaleTail(d.tail))*Math.cos(-Math.PI/4)})   
+    .attr("cy", function(d){return scaleY(d.y)-(scaleBody(d.body)+scaleTail(d.tail))*Math.sin(-Math.PI/4)}) 
+    .attr("r", function(d){return scaleTail(d.tail)});
+
+/* corpo della formica */
+ants.append("circle")
+    .attr("class", "ant")
+    .attr("id", "body")
+    .attr("cx", function(d){return scaleX(d.x)})  
+    .attr("cy", function(d){return scaleY(d.y)})      
+    .attr("r", function(d){return scaleBody(d.body)}) ;
+
+/* testa della formica */
+ants.append("circle")
+    .attr("class", "ant")
+    .attr("id", "head")
+    .attr("cx", function(d){return scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/4)})   
+    .attr("cy", function(d){return scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/4)})  
+    .attr("r", function(d){return scaleHead(d.head)}) ;     
+
+/* antenne della formica */
+ants.append("path")
+    .attr("class", "ant")
+    .attr("id", "antenna1")
+    .attr("d", function(d){return "M"+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/3)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/3)-scaleHead(d.head)*0.5)+" L "+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/3)+scaleAnte(d.ante)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/3)-scaleAnte(d.ante)-scaleHead(d.head)*0.5)})
+    .attr("fill", "none") 
+    .attr("stroke", "black") 
+    .attr("stroke-width", 2) 
+    .attr("stroke-linejoin", "round")
+ants.append("path")
+    .attr("class", "ant")
+    .attr("id", "antenna2")
+    .attr("d", function(d){return "M"+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/5)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/5)-scaleHead(d.head)*0.5)+" L "+(scaleX(d.x)+(scaleHead(d.head)+scaleBody(d.body))*Math.cos(-Math.PI/5)+scaleAnte(d.ante)+scaleHead(d.head)*0.5)+" "+(scaleY(d.y)+(scaleHead(d.head)+scaleBody(d.body))*Math.sin(-Math.PI/5)-scaleAnte(d.ante)-scaleHead(d.head)*0.5)})
+    .attr("fill", "none") 
+    .attr("stroke", "black") 
+    .attr("stroke-width", 2) 
+    .attr("stroke-linejoin", "round")
+
+/* zampe della formica */
+ants.append("path")
+    .attr("class", "ant")
+    .attr("id", "zampa1")
+    .attr("d",  function(d){return "M"+(scaleX(d.x)-scaleBody(d.body)*1.5)+" "+(scaleY(d.y)-scaleBody(d.body)*1.125)+" L "+(scaleX(d.x)+scaleBody(d.body)*1.5)+" "+(scaleY(d.y)+scaleBody(d.body)*1.125)}) 
+    .attr("fill", "none") 
+    .attr("stroke", "black") 
+    .attr("stroke-width", 2) 
+    .attr("stroke-linejoin", "round"); 
+
+ants.append("path")
+    .attr("class", "ant")
+    .attr("id", "zampa2")
+    .attr("d",  function(d){return "M"+(scaleX(d.x)-scaleBody(d.body)*1.125)+" "+(scaleY(d.y)-scaleBody(d.body)*1.5)+" L "+(scaleX(d.x)+scaleBody(d.body)*1.875)+" "+(scaleY(d.y)+scaleBody(d.body)*0.75)}) 
+    .attr("fill", "none") 
+    .attr("stroke", "black") 
+    .attr("stroke-width", 2)
+    .attr("stroke-linejoin", "round"); 
+
+ants.append("path")
+    .attr("class", "ant")
+    .attr("id", "zampa3")
+    .attr("d",  function(d){return "M"+(scaleX(d.x)-scaleBody(d.body)*1.875)+" "+(scaleY(d.y)-scaleBody(d.body)*0.75)+" L "+(scaleX(d.x)+scaleBody(d.body)*1.125)+" "+(scaleY(d.y)+scaleBody(d.body)*1.5)}) 
+    .attr("fill", "none") 
+    .attr("stroke", "black") 
+    .attr("stroke-width", 2) 
+    .attr("stroke-linejoin", "round"); 
+
+/* id della formica */
+
+ants.append("text")
+    .attr("y", d => scaleY(d.y) + 5)
+    .attr("x", d => scaleX(d.x))
+    .attr("text-anchor", "middle")
+    .attr("font-size", "13px")
+    .attr("fill", "white")
+    .text(d => d.id);
+    
+
+
+});
+
+</script>
+</body>
+</html>
+
